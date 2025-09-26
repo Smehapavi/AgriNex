@@ -1,4 +1,7 @@
 import React from 'react';
+import styles from './SensorPanel.module.css';
+import axios from 'axios';
+
 import {
   Typography,
   Grid,

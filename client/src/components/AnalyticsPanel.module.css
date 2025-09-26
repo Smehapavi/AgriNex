@@ -1,0 +1,45 @@
+.panel {
+  background: linear-gradient(90deg, #FFFDE7 0%, #E1F5FE 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+.title {
+  font-size: 1.7rem;
+  color: #0288D1;
+  margin-bottom: 1.2rem;
+  font-weight: 600;
+}
+.charts {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.chartCard {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.08);
+  padding: 1.2rem 2rem;
+  min-width: 220px;
+  margin-bottom: 1rem;
+}
+.diseaseName {
+  color: #388E3C;
+  font-weight: 500;
+}
+.diseaseCount {
+  color: #F44336;
+  font-weight: bold;
+}
+.heatmapPlaceholder {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  background: #FFFDE7;
+  border-radius: 8px;
+  color: #FFA000;
+  font-size: 1.15rem;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 1px 8px rgba(255,160,0,0.08);
+}

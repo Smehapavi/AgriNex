@@ -1,3 +1,41 @@
+// Save ML prediction result
+app.post('/api/predictions', async (req, res) => {
+  try {
+    const { disease, severity, status } = req.body;
+    if (!disease || !severity || !status) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const prediction = new Prediction({
+      disease,
+      severity,
+      status,
+      timestamp: new Date()
+    });
+    await prediction.save();
+    res.json({ success: true, prediction });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save prediction', details: error.message });
+  }
+});
+
+// Get all predictions sorted by newest first
+app.get('/api/predictions', async (req, res) => {
+  try {
+    const predictions = await Prediction.find().sort({ timestamp: -1 });
+    res.json(predictions);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch predictions', details: error.message });
+  }
+});
+// Delete all predictions (for cleanup)
+app.delete('/api/predictions', async (req, res) => {
+  try {
+    await Prediction.deleteMany({});
+    res.json({ success: true, message: 'All predictions deleted.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete predictions' });
+  }
+});
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -14,6 +52,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+const multer = require('multer');
+const upload = multer();
+const axios = require('axios');
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/agrinex', {
@@ -123,6 +164,45 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
   });
 }
+
+// ML Prediction endpoint
+// ML Prediction endpoint
+// ML Prediction endpoint
+app.post('/api/ml-predict', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image uploaded' });
+    }
+
+    // Send image to Python ML service
+    const response = await axios.post('http://localhost:5001/predict', req.file.buffer, {
+      headers: {
+        'Content-Type': 'application/octet-stream'
+      },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
+    });
+
+    const mlPrediction = response.data.prediction; // single object
+    const { disease, severity, status } = mlPrediction;
+
+    // Save prediction to MongoDB
+    const predictionDoc = new Prediction({
+      disease,
+      severity,
+      status,
+      timestamp: new Date()
+    });
+
+    const savedPrediction = await predictionDoc.save();
+
+    res.json({ success: true, prediction: savedPrediction });
+
+  } catch (error) {
+    console.error('ML prediction failed:', error);
+    res.status(500).json({ error: 'ML prediction failed', details: error.message });
+  }
+});
 
 // Start server
 app.listen(PORT, () => {

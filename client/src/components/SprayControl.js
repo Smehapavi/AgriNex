@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import styles from './SprayControl.module.css';
+import axios from 'axios';
 import {
   Typography,
   Grid,

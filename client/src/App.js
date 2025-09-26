@@ -46,26 +46,35 @@ function App() {
 
   // Fetch all data
   const fetchAllData = async () => {
-    try {
-      setLoading(true);
-      const [predictionsData, sensorsData, sensorsHistoryData, historyData] = await Promise.all([
-        apiService.getPredictions(),
-        apiService.getSensors(),
-        apiService.getSensorsHistory(24), // Get last 24 sensor readings for chart
-        apiService.getHistory()
-      ]);
-      
-      setPredictions(predictionsData);
-      setSensorData(sensorsData);
-      setSensorHistory(sensorsHistoryData);
-      setHistoryLogs(historyData);
-      setLastUpdate(new Date());
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    const [predictionsData, sensorsData, sensorsHistoryData, historyData] = await Promise.all([
+      apiService.getPredictions(),
+      apiService.getSensors(),
+      apiService.getSensorsHistory(24),
+      apiService.getHistory()
+    ]);
+
+    // Transform predictions to match your component
+    const formattedPredictions = predictionsData.map(p => ({
+      disease: p.disease,
+      severity: p.severity,
+      status: p.status,
+      timestamp: p.timestamp
+    }));
+
+    setPredictions(formattedPredictions);
+    setSensorData(sensorsData);
+    setSensorHistory(sensorsHistoryData);
+    setHistoryLogs(historyData);
+    setLastUpdate(new Date());
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Initial data fetch
   useEffect(() => {

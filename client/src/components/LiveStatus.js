@@ -1,4 +1,6 @@
 import React from 'react';
+import styles from './LiveStatus.module.css';
+import axios from 'axios';
 import {
   Typography,
   Grid,
@@ -14,20 +16,18 @@ import { BugReport, Warning, CheckCircle, Error } from '@mui/icons-material';
 const LiveStatus = ({ predictions, loading }) => {
   const getSeverityColor = (severity) => {
     switch (severity) {
-      case 'critical': return 'error';
-      case 'high': return 'warning';
-      case 'medium': return 'info';
-      case 'low': return 'success';
+      case 'High': return 'error';
+      case 'Moderate': return 'warning';
+      case 'Low': return 'info';
       default: return 'default';
     }
   };
 
   const getSeverityIcon = (severity) => {
     switch (severity) {
-      case 'critical': return <Error />;
-      case 'high': return <Warning />;
-      case 'medium': return <BugReport />;
-      case 'low': return <CheckCircle />;
+      case 'High': return <Error />;
+      case 'Moderate': return <Warning />;
+      case 'Low': return <BugReport />;
       default: return <BugReport />;
     }
   };
@@ -62,42 +62,31 @@ const LiveStatus = ({ predictions, loading }) => {
               sx={{ 
                 height: '100%',
                 border: '1px solid',
-                borderColor: getSeverityColor(prediction.severity) === 'error' ? 'error.main' : 
-                           getSeverityColor(prediction.severity) === 'warning' ? 'warning.main' : 
-                           'divider'
+                borderColor: prediction.severity ? getSeverityColor(prediction.severity) : 'divider'
               }}
             >
               <CardContent>
                 <Box display="flex" alignItems="center" gap={1} mb={1}>
-                  {getSeverityIcon(prediction.severity)}
+                  {prediction.severity ? getSeverityIcon(prediction.severity) : <CheckCircle />}
                   <Typography variant="h6" component="div">
-                    Plant {prediction.plantId}
+                    {prediction.plantId ? `Plant ${prediction.plantId}` : 'Leaf'}
                   </Typography>
                 </Box>
-                
                 <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {prediction.diseaseName}
+                  {prediction.status === 'Healthy' ? 'Healthy' : prediction.disease}
                 </Typography>
-                
-                <Box display="flex" gap={1} mb={1}>
+                {prediction.status === 'Unhealthy' && (
                   <Chip 
-                    label={prediction.severity.toUpperCase()}
+                    label={`Severity: ${prediction.severity}`}
                     color={getSeverityColor(prediction.severity)}
                     size="small"
                   />
-                  <Chip 
-                    label={`${prediction.confidence}%`}
-                    variant="outlined"
-                    size="small"
-                  />
-                </Box>
-                
+                )}
                 {prediction.location && (
                   <Typography variant="caption" color="text.secondary">
                     Zone: {prediction.location.zone || 'Unknown'}
                   </Typography>
                 )}
-                
                 {prediction.recommendation && (
                   <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
                     {prediction.recommendation}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Container, Divider } from '@mui/material';
 import { Agriculture, Code, GitHub } from '@mui/icons-material';
-
+import styles from './Footer.module.css';
 const Footer = () => {
   return (
     <Box

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Box, Chip, FormControlLabel, Switch } from '@mui/material';
 import { Agriculture, Refresh } from '@mui/icons-material';
-
+import styles from './Header.module.css';
 const Header = ({ lastUpdate, autoRefresh, onToggleAutoRefresh }) => {
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-US', {
